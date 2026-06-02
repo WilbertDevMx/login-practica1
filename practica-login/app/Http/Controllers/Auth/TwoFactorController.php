@@ -27,14 +27,14 @@ class TwoFactorController extends Controller
         // Si el usuario no tiene un secreto, se lo generamos y mostramos el QR
         if (empty($user->google2fa_secret)) {
             $secret = $google2fa->generateSecretKey();
-            $user->google2fa_secret = $secret;
-            $user->save();
+
 
             $qrCodeUrl = $google2fa->getQRCodeInline(
                 config('app.name'),
                 $user->email,
                 $secret
             );
+            session(['auth.2fa.setup_secret' => $secret]);
             return view('auth.2fa_verify', [
                 'qrCode' => $qrCodeUrl,
                 'secret' => $secret,
@@ -51,26 +51,46 @@ class TwoFactorController extends Controller
     public function verify(Request $request)
     {
         $request->validate(['one_time_password' => 'required|string']);
-        /** @var User|null $user */
+
         $user = Auth::user();
         $google2fa = new Google2FA();
-        $valid = $google2fa->verifyKey($user->google2fa_secret, $request->one_time_password);
+
+        // Si está en proceso de setup, usar el secret de sesión
+        $secret = $user->google2fa_secret ?? session('auth.2fa.setup_secret');
+
+        if (empty($secret)) {
+            return back()->withErrors(['one_time_password' => 'No hay secret configurado. Inicia sesión de nuevo.']);
+        }
+
+        $valid = $google2fa->verifyKey($secret, $request->one_time_password);
 
         if (!$valid) {
             return back()->withErrors(['one_time_password' => 'El código de verificación no es válido.']);
         }
 
-        // Marcar la verificación 2FA como completada
+        // Solo aquí persistir el secret si era nuevo
+        if (empty($user->google2fa_secret)) {
+            $user->google2fa_secret = $secret;
+            $user->save();
+            session()->forget('auth.2fa.setup_secret');
+        }
+
         session(['auth.2fa.completed' => true]);
         session()->forget('auth.2fa.pending');
 
-        // Redirigir según el rol para la tercera fase
         $role = $user->getRoleNames()->first();
         if ($role === 'administrador') {
-            return redirect()->route('3fa.verify'); // 3. IR AL 3FA (SOLO ADMIN)
+            return redirect()->route('3fa.verify');
         }
 
-        // Es usuario estándar: login completo
+        // Log exitoso para usuario
+        \App\Models\LoginLog::create([
+            'email'      => $user->email,
+            'ip'         => $request->ip(),
+            'exitoso'    => true,
+            'user_agent' => $request->userAgent(),
+        ]);
+
         return redirect()->intended('/dashboard')->with('success', '¡Bienvenido!');
     }
 }

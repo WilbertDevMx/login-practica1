@@ -43,12 +43,12 @@
 
 @section('content')
 <div class="card">
-    <h2>🔐 Verificación 2FA</h2>
+    <h2>Verificación 2FA</h2>
 
     @if($isNew)
         <p>Escanea este código QR con <strong>Google Authenticator</strong>:</p>
         <div class="qr-box">
-            <img src="{{ $qrCode }}" alt="Código QR para Google Authenticator">
+            <img src="data:image/svg+xml;base64,{{ base64_encode($qrCode) }}" alt="Código QR para Google Authenticator">
         </div>
         <p>O introduce manualmente esta clave secreta:</p>
         <div class="secret-box">{{ $secret }}</div>
