@@ -39,7 +39,17 @@ Route::get('/', function () {
 
 
 Route::get('/2fa/verify', [App\Http\Controllers\Auth\TwoFactorController::class, 'showVerifyForm'])->name('2fa.verify');
-Route::post('/2fa/verify', [App\Http\Controllers\Auth\TwoFactorController::class, 'verify']);
+Route::post('/2fa/verify', [App\Http\Controllers\Auth\TwoFactorController::class, 'verify'])->middleware('throttle:5,1');
 Route::get('/3fa/verify', [App\Http\Controllers\Auth\ThreeFactorController::class, 'showVerifyForm'])->name('3fa.verify');
-Route::post('/3fa/verify', [App\Http\Controllers\Auth\ThreeFactorController::class, 'verify']);
+Route::post('/3fa/verify', [App\Http\Controllers\Auth\ThreeFactorController::class, 'verify'])->middleware('throttle:5,1');;
 Route::post('/3fa/resend', [App\Http\Controllers\Auth\ThreeFactorController::class, 'resendCode'])->name('3fa.resend');
+// Dashboard general
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'mfa.complete'])->name('dashboard');
+
+// Dashboard admin con logs
+Route::get('/dashboard/admin', function () {
+    $logs = \App\Models\LoginLog::orderBy('created_at', 'desc')->take(50)->get();
+    return view('dashboard-admin', compact('logs'));
+})->middleware(['auth', 'mfa.complete'])->name('dashboard.admin');
