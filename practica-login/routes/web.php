@@ -46,11 +46,17 @@ Route::get('/3fa/verify', [App\Http\Controllers\Auth\ThreeFactorController::clas
 Route::post('/3fa/verify', [App\Http\Controllers\Auth\ThreeFactorController::class, 'verify'])->middleware('throttle:5,1');;
 Route::post('/3fa/resend', [App\Http\Controllers\Auth\ThreeFactorController::class, 'resendCode'])->name('3fa.resend');
 // Dashboard general
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'mfa.complete'])->name('dashboard');
+// Invitado
+Route::get('/dashboard/invitado', function () {
+    return view('dashboard-invitado');
+})->middleware(['auth', 'mfa.complete'])->name('dashboard.invitado');
 
-// Dashboard admin con logs
+// Usuario
+Route::get('/dashboard/usuario', function () {
+    return view('dashboard-usuario');
+})->middleware(['auth', 'mfa.complete'])->name('dashboard.usuario');
+
+// Admin
 Route::get('/dashboard/admin', function () {
     $logs = \App\Models\LoginLog::orderBy('created_at', 'desc')->take(50)->get();
     return view('dashboard-admin', compact('logs'));
