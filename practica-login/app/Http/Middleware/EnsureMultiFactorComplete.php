@@ -19,7 +19,11 @@ class EnsureMultiFactorComplete
         $role = $user->getRoleNames()->first();
 
         // Invitado: no necesita MFA
+        // Invitado: no necesita MFA pero solo puede ver su dashboard
         if ($role === 'invitado') {
+            if ($request->route()->getName() !== 'dashboard.invitado') {
+                return redirect()->route('dashboard.invitado');
+            }
             return $next($request);
         }
 
@@ -31,6 +35,20 @@ class EnsureMultiFactorComplete
         // Solo administrador: requiere además 3FA completado
         if ($role === 'administrador' && !session('auth.3fa.completed')) {
             return redirect()->route('3fa.verify');
+        }
+
+        // Verificar que el usuario esté en su dashboard correcto
+        $dashboards = [
+            'invitado'      => 'dashboard.invitado',
+            'usuario'       => 'dashboard.usuario',
+            'administrador' => 'dashboard.admin',
+        ];
+
+        $rutaCorrecta = $dashboards[$role] ?? 'login';
+        $rutaActual   = $request->route()->getName();
+
+        if ($rutaActual !== $rutaCorrecta) {
+            return redirect()->route($rutaCorrecta);
         }
 
         return $next($request);

@@ -41,7 +41,13 @@ class LoginController extends Controller
             $role = $user->getRoleNames()->first();
 
             if ($role === 'invitado') {
-                return redirect()->intended('/dashboard')->with('success', '¡Bienvenido!');
+                LoginLog::create([
+                    'email'      => $request->email,
+                    'ip'         => $request->ip(),
+                    'exitoso'    => true,
+                    'user_agent' => $request->userAgent(),
+                ]);
+                return redirect()->route('dashboard.invitado')->with('success', '¡Bienvenido!');
             } elseif ($role === 'usuario') {
                 session(['auth.2fa.pending' => true]);
                 return redirect()->route('2fa.verify');

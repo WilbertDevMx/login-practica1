@@ -46,7 +46,7 @@
     <div class="card">
         <div style="display:flex; justify-content:space-between; align-items:center;">
             <div>
-                <h1>🛡️ Panel de Administrador</h1>
+                <h1> Panel de Administrador</h1>
                 <div class="subtitle">Bienvenido, {{ Auth::user()->name }}</div>
             </div>
             <form method="POST" action="/cerrar-sesion-ahora">

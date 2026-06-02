@@ -102,6 +102,6 @@ class TwoFactorController extends Controller
             'user_agent' => $request->userAgent(),
         ]);
 
-        return redirect()->intended('/dashboard')->with('success', '¡Bienvenido!');
+        return redirect()->route('dashboard.usuario')->with('success', '¡Bienvenido!');
     }
 }
