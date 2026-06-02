@@ -25,15 +25,20 @@ class ThreeFactorController extends Controller
 
     public function showVerifyForm()
     {
-        // Si el código ya se verificó, redirigir
         if (session('auth.3fa.completed')) {
             return redirect()->intended('/dashboard');
         }
 
-        // Generar y enviar un nuevo código si no existe en sesión
-        $this->generateAndSendCode();
+        // Solo generar nuevo código si no existe uno vigente
+        $expiresAt = session('auth.3fa.expires_at');
+        $codigoVigente = session()->has('auth.3fa.code') 
+                        && $expiresAt 
+                        && now()->lt($expiresAt);
 
-        //dd(session('auth.3fa.code'), session('auth.3fa.expires_at'));
+        if (!$codigoVigente) {
+            $this->generateAndSendCode();
+        }
+
         return view('auth.3fa_verify');
     }
 
