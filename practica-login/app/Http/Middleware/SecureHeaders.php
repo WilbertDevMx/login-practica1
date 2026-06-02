@@ -18,7 +18,11 @@ class SecureHeaders
         $response->headers->set('Server', '');
         $response->headers->set(
             'Content-Security-Policy',
-            "default-src 'self'; script-src 'self' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/; frame-src https://www.google.com/recaptcha/"
+            "default-src 'self'; " .
+            "style-src 'self' 'unsafe-inline'; " .
+            "script-src 'self' 'unsafe-inline' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/; " .
+            "frame-src https://www.google.com/recaptcha/; " .
+            "img-src 'self' data:;"
         );
 
         if (app()->environment('production')) {
