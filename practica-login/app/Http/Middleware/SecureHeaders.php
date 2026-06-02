@@ -9,13 +9,22 @@ class SecureHeaders
     public function handle($request, Closure $next)
     {
         $response = $next($request);
+
         $response->headers->set('X-Frame-Options', 'DENY');
         $response->headers->set('X-Content-Type-Options', 'nosniff');
         $response->headers->set('X-XSS-Protection', '1; mode=block');
-        // Para HTTPS en producción: Strict-Transport-Security
+        $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
+        $response->headers->remove('X-Powered-By');
+        $response->headers->set('Server', '');
+        $response->headers->set(
+            'Content-Security-Policy',
+            "default-src 'self'; script-src 'self' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/; frame-src https://www.google.com/recaptcha/"
+        );
+
         if (app()->environment('production')) {
             $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
         }
+
         return $response;
     }
 }

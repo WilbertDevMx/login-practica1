@@ -31,10 +31,9 @@ class ThreeFactorController extends Controller
         }
 
         // Generar y enviar un nuevo código si no existe en sesión
-        if (!session()->has('auth.3fa.code')) {
-            $this->generateAndSendCode();
-        }
+        $this->generateAndSendCode();
 
+        //dd(session('auth.3fa.code'), session('auth.3fa.expires_at'));
         return view('auth.3fa_verify');
     }
 
@@ -72,7 +71,7 @@ class ThreeFactorController extends Controller
         session()->forget(['auth.2fa.pending', 'auth.3fa.code', 'auth.3fa.expires_at']);
         session(['auth.3fa.completed' => true]);
 
-        return redirect()->intended('/dashboard')->with('success', '¡Bienvenido, Administrador!');
+        return redirect()->route('dashboard.admin')->with('success', '¡Bienvenido, Administrador!');
     }
 
     public function resendCode()

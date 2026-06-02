@@ -1,73 +1,92 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Login Seguro</title>
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <style>
-        body { font-family: sans-serif; max-width: 400px; margin: 50px auto; padding: 20px; }
-        input { width: 100%; padding: 10px; margin: 10px 0; }
-        button { padding: 10px 20px; background: #007bff; color: white; border: none; cursor: pointer; }
-        .error { color: red; margin-bottom: 10px; }
-        .alert-success { color: green; margin-top: 10px; }
-    </style>
-    <!-- Cargar script de reCAPTCHA v3 -->
-    <script src="https://www.google.com/recaptcha/api.js?render={{ config('services.recaptcha.site_key') }}"></script>
-</head>
-<body>
+@extends('layouts.app')
+
+@section('title', 'Login Seguro')
+
+@section('head')
+<script src="https://www.google.com/recaptcha/api.js?render={{ config('services.recaptcha.site_key') }}"></script>
+<style>
+    .card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        padding: 2rem;
+        width: 100%;
+        max-width: 400px;
+    }
+    h2 { color: #333; margin-bottom: 1.5rem; text-align: center; }
+    label { display: block; margin-top: 1rem; color: #555; font-size: 0.9rem; }
+    input[type="email"],
+    input[type="password"] {
+        width: 100%; padding: 10px 12px; margin-top: 4px;
+        border: 1px solid #ddd; border-radius: 8px; font-size: 1rem;
+    }
+    .remember { display: flex; align-items: center; gap: 8px; margin-top: 1rem; color: #555; font-size: 0.9rem; }
+    button[type="submit"] {
+        width: 100%; margin-top: 1.5rem; padding: 12px;
+        background: #667eea; color: white; border: none;
+        border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer;
+        transition: background 0.2s;
+    }
+    button[type="submit"]:hover { background: #5563c1; }
+    button[type="submit"]:disabled { background: #aaa; cursor: not-allowed; }
+    .error { color: red; margin-bottom: 10px; font-size: 0.9rem; }
+    .alert-success { color: green; margin-top: 10px; font-size: 0.9rem; }
+</style>
+@endsection
+
+@section('content')
+<div class="card">
     <h2>Iniciar sesión</h2>
 
     @if ($errors->any())
-        <div class="error">
-            {{ $errors->first() }}
-        </div>
+        <div class="error">{{ $errors->first() }}</div>
     @endif
 
     @if(session('message'))
-        <div class="alert-success">
-            {{ session('message') }}
-        </div>
+        <div class="alert-success">{{ session('message') }}</div>
     @endif
 
     <form method="POST" action="{{ route('login') }}" id="loginForm">
         @csrf
 
-        <div>
-            <label>Email:</label>
-            <input type="email" name="email" value="{{ old('email') }}" required autofocus>
-        </div>
-        <div>
-            <label>Contraseña:</label>
-            <input type="password" name="password" required>
-        </div>
+        <label>Email:</label>
+        <input type="email" name="email" value="{{ old('email') }}" required autofocus>
 
-        <!-- Campo oculto donde se almacenará el token de reCAPTCHA -->
+        <label>Contraseña:</label>
+        <input type="password" name="password" required>
+
         <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
 
-        <div>
-            <label>
-                <input type="checkbox" name="remember"> Recordarme
-            </label>
+        <div class="remember">
+            <input type="checkbox" name="remember" id="remember">
+            <label for="remember" style="margin:0;">Recordarme</label>
         </div>
 
         <button type="submit" id="submitBtn">Entrar</button>
     </form>
+</div>
+@endsection
 
-    <script>
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault(); // Evita el envío normal
+@section('scripts')
+<script>
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.innerText = 'Verificando...';
 
-            const submitBtn = document.getElementById('submitBtn');
-            submitBtn.disabled = true;
-            submitBtn.innerText = 'Verificando...';
-
-            grecaptcha.ready(function() {
-                grecaptcha.execute('{{ config('services.recaptcha.site_key') }}', { action: 'login' }).then(function(token) {
-                    document.getElementById('g-recaptcha-response').value = token;
-                    document.getElementById('loginForm').submit();
-                });
+        grecaptcha.ready(function() {
+            grecaptcha.execute('{{ config('services.recaptcha.site_key') }}', { action: 'login' }).then(function(token) {
+                document.getElementById('g-recaptcha-response').value = token;
+                document.getElementById('loginForm').submit();
             });
         });
-    </script>
-</body>
-</html>
+    });
+
+    window.addEventListener('pageshow', function(e) {
+        if (e.persisted) {
+            window.location.reload();
+        }
+    });
+</script>
+@endsection

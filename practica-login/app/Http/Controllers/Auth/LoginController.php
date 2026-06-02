@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use App\Rules\RecaptchaRule;
+use App\Models\LoginLog;
 
 class LoginController extends Controller
 {
@@ -50,6 +51,13 @@ class LoginController extends Controller
                 return redirect()->route('2fa.verify');
             }
         }
+
+        LoginLog::create([
+            'email'      => $request->email,
+            'ip'         => $request->ip(),
+            'exitoso'    => false,
+            'user_agent' => $request->userAgent(),
+        ]);
 
         throw ValidationException::withMessages([
             'email' => [trans('auth.failed')],
