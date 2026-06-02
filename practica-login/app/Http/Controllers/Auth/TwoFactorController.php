@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use PragmaRX\Google2FAQRCode\Google2FA;
 use App\Models\User;
+use App\Models\TwoFactorLog;
 
 class TwoFactorController extends Controller
 {
@@ -14,7 +15,7 @@ class TwoFactorController extends Controller
         $this->middleware('auth'); // Requiere que el usuario esté logueado parcialmente
     }
 
-    public function showVerifyForm()
+    public function showVerifyForm(Request $request)
     {
         // Si el usuario ya completó el 2FA, redirigir
         if (session('auth.2fa.completed')) {
@@ -27,7 +28,6 @@ class TwoFactorController extends Controller
         // Si el usuario no tiene un secreto, se lo generamos y mostramos el QR
         if (empty($user->google2fa_secret)) {
             $secret = $google2fa->generateSecretKey();
-
 
             $qrCodeUrl = $google2fa->getQRCodeInline(
                 config('app.name'),
@@ -63,6 +63,17 @@ class TwoFactorController extends Controller
         }
 
         $valid = $google2fa->verifyKey($secret, $request->one_time_password);
+
+        // Registrar el intento
+        \App\Models\TwoFactorLog::create([
+            'user_id'    => $user->id,
+            'email'      => $user->email,
+            'ip'         => $request->ip(),
+            'user_agent' => $request->userAgent(),
+            'action'     => 'verify_attempt',
+            'successful' => $valid,
+            'message'    => $valid ? 'OTP correcto' : 'Código OTP inválido',
+        ]);
 
         if (!$valid) {
             return back()->withErrors(['one_time_password' => 'El código de verificación no es válido.']);
