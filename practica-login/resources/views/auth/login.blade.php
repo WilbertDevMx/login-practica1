@@ -50,10 +50,12 @@
         @csrf
 
         <label>Email:</label>
-        <input type="email" name="email" value="{{ old('email') }}" required autofocus>
+        <input type="email" name="email" value="{{ old('email') }}"
+               maxlength="255" required autofocus autocomplete="email">
 
         <label>Contraseña:</label>
-        <input type="password" name="password" required>
+        <input type="password" name="password"
+               maxlength="128" required autocomplete="current-password">
 
         <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
 
@@ -85,7 +87,9 @@
 
     window.addEventListener('pageshow', function(e) {
         if (e.persisted) {
-            window.location.reload();
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = false;
+            btn.innerText = 'Entrar';
         }
     });
 </script>
