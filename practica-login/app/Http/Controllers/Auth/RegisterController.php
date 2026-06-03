@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\RegistrationLog;
 use App\Rules\RecaptchaRule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -17,7 +18,7 @@ class RegisterController extends Controller
 
     public function register(Request $request)
     {
-        $request->validate([
+        $validator = validator($request->all(), [
             'name'                  => ['required', 'string', 'max:100'],
             'email'                 => ['required', 'email', 'max:255', 'unique:users,email'],
             'password'              => [
@@ -41,14 +42,37 @@ class RegisterController extends Controller
             'password.regex'        => 'La contraseña debe incluir mayúsculas, minúsculas, números y un símbolo (@$!%*?&_-#).',
         ]);
 
+        // Log de intento fallido (si falla la validación)
+        if ($validator->fails()) {
+            RegistrationLog::create([
+                'email'      => $request->email,
+                'ip'         => $request->ip(),
+                'user_agent' => $request->userAgent(),
+                'successful' => false,
+                'message'    => 'Error de validación: ' . implode('; ', $validator->errors()->all()),
+            ]);
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        // Crear usuario
         $user = User::create([
             'name'     => $request->name,
             'email'    => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
-        // Rol invitado por defecto
+        // Asignar rol por defecto
         $user->assignRole('invitado');
+
+        // Log de registro exitoso
+        RegistrationLog::create([
+            'user_id'    => $user->id,
+            'email'      => $user->email,
+            'ip'         => $request->ip(),
+            'user_agent' => $request->userAgent(),
+            'successful' => true,
+            'message'    => 'Registro exitoso',
+        ]);
 
         return redirect()->route('login')->with('message', '¡Cuenta creada exitosamente! Inicia sesión.');
     }
