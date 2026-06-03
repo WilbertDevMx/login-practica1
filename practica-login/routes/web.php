@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\TwoFactorController;
 use App\Http\Controllers\Auth\ThreeFactorController;
+use App\Models\LoginLog;
+use App\Models\RegistrationLog;
 
 /*
 |--------------------------------------------------------------------------
@@ -58,8 +60,10 @@ Route::get('/dashboard/usuario', function () {
 
 // Admin
 Route::get('/dashboard/admin', function () {
-    $logs = \App\Models\LoginLog::orderBy('created_at', 'desc')->take(50)->get();
-    return view('dashboard-admin', compact('logs'));
+    $loginLogs = LoginLog::orderBy('created_at', 'desc')->take(50)->get();
+    $registrationLogs = RegistrationLog::orderBy('created_at', 'desc')->take(50)->get();
+    return view('dashboard-admin', compact('loginLogs', 'registrationLogs'));
 })->middleware(['auth', 'mfa.complete'])->name('dashboard.admin');
+
 Route::get('/register', [App\Http\Controllers\Auth\RegisterController::class, 'showRegisterForm'])->name('register');
 Route::post('/register', [App\Http\Controllers\Auth\RegisterController::class, 'register'])->middleware('throttle:5,10');

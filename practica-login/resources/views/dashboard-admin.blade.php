@@ -38,6 +38,7 @@
         border-radius: 8px; margin-bottom: 1rem;
         border-left: 4px solid #28a745;
     }
+    h2 { color: #333; margin-bottom: 1rem; font-size: 1.4rem; margin-top: 0; }
 </style>
 @endsection
 
@@ -60,10 +61,11 @@
         @endif
     </div>
 
+    {{-- TABLA DE LOGIN LOGS --}}
     <div class="card">
-        <h2 style="margin-bottom:1rem; color:#333;"> Últimos 50 intentos de login</h2>
+        <h2> Últimos 50 intentos de login</h2>
 
-        @if($logs->isEmpty())
+        @if($loginLogs->isEmpty())
             <p style="color:#888;">No hay registros aún.</p>
         @else
             <table>
@@ -78,7 +80,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($logs as $log)
+                    @foreach($loginLogs as $log)
                     <tr>
                         <td>{{ $log->id }}</td>
                         <td>{{ $log->email }}</td>
@@ -92,6 +94,48 @@
                             {{ $log->user_agent }}
                         </td>
                         <td>{{ $log->created_at->format('d/m/Y H:i:s') }}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @endif
+    </div>
+
+    {{-- TABLA DE REGISTRATION LOGS --}}
+    <div class="card">
+        <h2> Últimos 50 intentos de registro</h2>
+
+        @if($registrationLogs->isEmpty())
+            <p style="color:#888;">No hay registros aún.</p>
+        @else
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Email</th>
+                        <th>IP</th>
+                        <th>Estado</th>
+                        <th>Mensaje</th>
+                        <th>Navegador</th>
+                        <th>Fecha</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($registrationLogs as $regLog)
+                    <tr>
+                        <td>{{ $regLog->id }}</td>
+                        <td>{{ $regLog->email }}</td>
+                        <td>{{ $regLog->ip }}</td>
+                        <td>
+                            <span class="badge {{ $regLog->successful ? 'badge-ok' : 'badge-fail' }}">
+                                {{ $regLog->successful ? ' Exitoso' : ' Fallido' }}
+                            </span>
+                        </td>
+                        <td style="max-width:250px; word-break:break-word;">{{ $regLog->message ?? '-' }}</td>
+                        <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                            {{ $regLog->user_agent }}
+                        </td>
+                        <td>{{ $regLog->created_at->format('d/m/Y H:i:s') }}</td>
                     </tr>
                     @endforeach
                 </tbody>
