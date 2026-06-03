@@ -61,3 +61,5 @@ Route::get('/dashboard/admin', function () {
     $logs = \App\Models\LoginLog::orderBy('created_at', 'desc')->take(50)->get();
     return view('dashboard-admin', compact('logs'));
 })->middleware(['auth', 'mfa.complete'])->name('dashboard.admin');
+Route::get('/register', [App\Http\Controllers\Auth\RegisterController::class, 'showRegisterForm'])->name('register');
+Route::post('/register', [App\Http\Controllers\Auth\RegisterController::class, 'register'])->middleware('throttle:5,10');

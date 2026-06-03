@@ -59,6 +59,9 @@
 
         <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
 
+        <div style="text-align:center; margin-top:1rem; font-size:0.88rem; color:#888;">
+            ¿No tienes cuenta? <a href="{{ route('register') }}" style="color:#667eea; font-weight:600;">Regístrate</a>
+        </div>
         <div class="remember">
             <input type="checkbox" name="remember" id="remember">
             <label for="remember" style="margin:0;">Recordarme</label>
