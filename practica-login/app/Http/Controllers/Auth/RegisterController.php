@@ -9,13 +9,57 @@ use App\Rules\RecaptchaRule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
+/**
+ * Controlador de registro de nuevos usuarios.
+ *
+ * Gestiona el formulario de registro y la creación de cuentas, incluyendo
+ * validación de campos con mensajes personalizados, verificación reCAPTCHA,
+ * asignación de rol por defecto y auditoría completa en RegistrationLog
+ * tanto para intentos fallidos como exitosos.
+ *
+ * @package App\Http\Controllers\Auth
+ */
 class RegisterController extends Controller
 {
+    /**
+     * Muestra el formulario de registro de nuevos usuarios.
+     *
+     * @return \Illuminate\View\View  Vista 'auth.register'
+     */
     public function showRegisterForm()
     {
         return view('auth.register');
     }
 
+    /**
+     * Procesa el registro de un nuevo usuario en el sistema.
+     *
+     * Ejecuta las siguientes acciones en orden:
+     * 1. Valida los campos del formulario con reglas y mensajes personalizados.
+     * 2. Si la validación falla, registra el intento en RegistrationLog y
+     *    redirige de vuelta con los errores.
+     * 3. Crea el usuario con la contraseña hasheada mediante bcrypt.
+     * 4. Asigna el rol `invitado` por defecto (Spatie Permission).
+     * 5. Registra el evento exitoso en RegistrationLog.
+     * 6. Redirige al login con mensaje de confirmación.
+     *
+     * Reglas de validación aplicadas:
+     * - `name`                 : requerido, string, máx. 100 caracteres.
+     * - `email`                : requerido, formato email, máx. 255, único en tabla `users`.
+     * - `password`             : requerido, mín. 12 / máx. 128 caracteres, confirmado,
+     *                            debe contener mayúsculas, minúsculas, dígitos y símbolo (@$!%*?&_-#).
+     * - `g-recaptcha-response` : requerido, validado mediante {@see RecaptchaRule}.
+     *
+     * @param  \Illuminate\Http\Request  $request  Datos del formulario:
+     *                                             - string $name
+     *                                             - string $email
+     *                                             - string $password
+     *                                             - string $password_confirmation
+     *                                             - string $g-recaptcha-response
+     *
+     * @return \Illuminate\Http\RedirectResponse  Redirección al login si el registro es exitoso,
+     *                                            o de vuelta al formulario si la validación falla
+     */
     public function register(Request $request)
     {
         $validator = validator($request->all(), [
