@@ -4,8 +4,29 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\TwoFactorController;
 use App\Http\Controllers\Auth\ThreeFactorController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Models\LoginLog;
+use App\Models\RegistrationLog;
 
-// Ruta raíz redirige al login
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+| Aquí se definen las rutas web de la aplicación.
+| Todas pertenecen al grupo middleware 'web'.
+*/
+
+// Rutas de autenticación (login, logout)
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [LoginController::class, 'login'])->middleware('throttle:5,1');
+Route::post('/cerrar-sesion-ahora', [LoginController::class, 'logout'])->name('logout.ahora');
+
+// Dashboard principal (protegido)
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware('auth')->name('dashboard');
+
+// Redirección raíz
 Route::get('/', function () {
     return redirect()->route('login');
 })->name('home');
@@ -53,3 +74,6 @@ Route::get('/dashboard/admin', function () {
 Route::put('/admin/users/{user}/rol', [App\Http\Controllers\Admin\RoleController::class, 'update'])
     ->middleware(['auth'])
     ->name('admin.roles.update');
+// Registro de usuarios
+Route::get('/register', [RegisterController::class, 'showRegisterForm'])->name('register');
+Route::post('/register', [RegisterController::class, 'register'])->middleware('throttle:5,10');

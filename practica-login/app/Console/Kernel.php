@@ -5,10 +5,17 @@ namespace App\Console;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
+/**
+ * Kernel de consola de la aplicación.
+ *
+ * Define la programación de comandos y registra los comandos disponibles.
+ */
 class Kernel extends ConsoleKernel
 {
     /**
-     * Define the application's command schedule.
+     * Define la programación de comandos de la aplicación.
+     *
+     * @return void
      */
     protected function schedule(Schedule $schedule): void
     {
@@ -16,7 +23,9 @@ class Kernel extends ConsoleKernel
     }
 
     /**
-     * Register the commands for the application.
+     * Registra los comandos para la aplicación.
+     *
+     * @return void
      */
     protected function commands(): void
     {
