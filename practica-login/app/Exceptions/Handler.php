@@ -4,20 +4,27 @@ namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
+use Psr\Log\LogLevel;
 
+/**
+ * Manejador de excepciones personalizado para la aplicación.
+ *
+ * Configura los niveles de log, excepciones no reportadas,
+ * campos que no se deben mostrar en sesión, y callbacks de reporte.
+ */
 class Handler extends ExceptionHandler
 {
     /**
-     * A list of exception types with their corresponding custom log levels.
+     * Lista de tipos de excepción con sus niveles de log personalizados.
      *
-     * @var array<class-string<\Throwable>, \Psr\Log\LogLevel::*>
+     * @var array<class-string<\Throwable>, LogLevel::*>
      */
     protected $levels = [
         //
     ];
 
     /**
-     * A list of the exception types that are not reported.
+     * Lista de tipos de excepción que no deben ser reportadas.
      *
      * @var array<int, class-string<\Throwable>>
      */
@@ -26,7 +33,7 @@ class Handler extends ExceptionHandler
     ];
 
     /**
-     * A list of the inputs that are never flashed to the session on validation exceptions.
+     * Lista de inputs que nunca se deben guardar en sesión en excepciones de validación.
      *
      * @var array<int, string>
      */
@@ -37,7 +44,9 @@ class Handler extends ExceptionHandler
     ];
 
     /**
-     * Register the exception handling callbacks for the application.
+     * Registra los callbacks de manejo de excepciones para la aplicación.
+     *
+     * @return void
      */
     public function register(): void
     {
