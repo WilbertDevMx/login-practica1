@@ -2,21 +2,26 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 
+/**
+ * Seeder para crear los roles base del sistema.
+ *
+ * Crea los roles: invitado, usuario y administrador.
+ * Utiliza firstOrCreate() para evitar duplicados al ejecutar el seeder múltiples veces.
+ */
 class RoleSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * Ejecuta el seeder de roles.
+     *
+     * @return void
      */
     public function run(): void
     {
-        // Crear roles solo si no existen para evitar errores al ejecutar el seeder varias veces
         Role::firstOrCreate(['name' => 'invitado']);
         Role::firstOrCreate(['name' => 'usuario']);
         Role::firstOrCreate(['name' => 'administrador']);
-
     }
 }
