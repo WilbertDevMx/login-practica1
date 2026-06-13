@@ -5,9 +5,9 @@ namespace Tests\Feature;
 use App\Models\LoginLog;
 use App\Models\RegistrationLog;
 use App\Models\User;
-use App\Rules\RecaptchaRule;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Http;
+use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class AuthLoginRegistroTest extends TestCase
@@ -18,13 +18,14 @@ class AuthLoginRegistroTest extends TestCase
     {
         parent::setUp();
 
-        // Evitar llamadas reales a la API de Google reCAPTCHA en tests
-        $this->app->bind(RecaptchaRule::class, function () {
-            $mock = $this->createMock(RecaptchaRule::class);
-            $mock->method('passes')->willReturn(true);
-            $mock->method('message')->willReturn('');
-            return $mock;
-        });
+        Role::create(['name' => 'administrador', 'guard_name' => 'web']);
+        Role::create(['name' => 'usuario',       'guard_name' => 'web']);
+        Role::create(['name' => 'invitado',      'guard_name' => 'web']);
+
+        // Simular reCAPTCHA válido en todos los tests (wildcard para capturar withOptions())
+        Http::fake([
+            '*' => Http::response(['success' => true]),
+        ]);
     }
 
     // --- Vistas ---
@@ -182,7 +183,6 @@ class AuthLoginRegistroTest extends TestCase
 
         $response = $this->actingAs($user)->get('/login');
 
-        // Usuario ya autenticado no debería ver el formulario de login
         $response->assertRedirect();
     }
 }
