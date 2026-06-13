@@ -1,0 +1,4 @@
+<?php
+
+// Console routes placeholder
+
