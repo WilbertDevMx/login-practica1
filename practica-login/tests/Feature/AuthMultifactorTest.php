@@ -6,11 +6,20 @@ use App\Models\TwoFactorLog;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PragmaRX\Google2FAQRCode\Google2FA;
+use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class AuthMultifactorTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Role::create(['name' => 'administrador', 'guard_name' => 'web']);
+        Role::create(['name' => 'usuario',       'guard_name' => 'web']);
+        Role::create(['name' => 'invitado',      'guard_name' => 'web']);
+    }
 
     // --- Vista 2FA ---
 
