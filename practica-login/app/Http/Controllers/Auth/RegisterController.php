@@ -71,7 +71,7 @@ class RegisterController extends Controller
                 'min:12',
                 'max:128',
                 'confirmed',
-                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&_\-#])[A-Za-z\d@$!%*?&_\-#]+$/',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d])[^\s]+$/',
             ],
             'g-recaptcha-response'  => ['required', new RecaptchaRule],
         ], [
