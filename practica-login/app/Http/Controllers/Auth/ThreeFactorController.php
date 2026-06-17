@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
-
+use App\Models\LoginLog;
 /**
  * Controlador del tercer factor de autenticación (3FA) para administradores.
  *
@@ -133,6 +133,13 @@ class ThreeFactorController extends Controller
         }
 
         if ($request->verification_code !== session('auth.3fa.code')) {
+            LoginLog::create([
+                'email'      => Auth::user()->email,  // ← email del usuario autenticado
+                'ip'         => $request->ip(),
+                'exitoso'    => false,
+                'error_en'  => '3fa_invalide_code',
+                'user_agent' => $request->userAgent(),
+            ]);
             return back()->withErrors(['verification_code' => 'El código ingresado es incorrecto.']);
         }
 

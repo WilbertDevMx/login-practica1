@@ -151,6 +151,13 @@ class TwoFactorController extends Controller
         ]);
 
         if (!$valid) {
+            LoginLog::create([
+                'email'      => $user->email,
+                'ip'         => $request->ip(),
+                'exitoso'    => false,
+                'error_en'  => '2fa_invalidate code',
+                'user_agent' => $request->userAgent(),
+            ]);
             return back()->withErrors(['one_time_password' => 'El código de verificación no es válido.']);
         }
 

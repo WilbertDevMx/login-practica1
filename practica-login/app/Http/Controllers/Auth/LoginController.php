@@ -100,6 +100,7 @@ class LoginController extends Controller
         LoginLog::create([
             'email'      => $request->email,
             'ip'         => $request->ip(),
+            'error_en'  => 'Error al validar credenciales',
             'exitoso'    => false,
             'user_agent' => $request->userAgent(),
         ]);

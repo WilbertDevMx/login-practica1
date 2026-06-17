@@ -47,7 +47,7 @@
 
 @section('content')
 <div class="card">
-    <h2>📧 Verificación 3FA</h2>
+    <h2> Verificación 3FA</h2>
 
     @if(session('status'))
         <div class="alert-success">{{ session('status') }}</div>

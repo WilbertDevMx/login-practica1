@@ -61,7 +61,7 @@
     <div class="card">
         <div style="display:flex; justify-content:space-between; align-items:center;">
             <div>
-                <h1>🛡️ Panel de Administrador</h1>
+                <h1> Panel de Administrador</h1>
                 <div class="subtitle">Bienvenido, {{ Auth::user()->name }}</div>
             </div>
             <form method="POST" action="/cerrar-sesion-ahora">
@@ -79,7 +79,7 @@
 
     {{-- Gestión de usuarios y roles --}}
     <div class="card">
-        <h2>👥 Usuarios y roles</h2>
+        <h2> Usuarios y roles</h2>
         @if($users->isEmpty())
             <p class="text-muted">No hay usuarios registrados.</p>
         @else
@@ -130,23 +130,24 @@
 
     {{-- Logs de login --}}
     <div class="card">
-        <h2>🔐 Últimos 50 intentos de login</h2>
+        <h2> Últimos 50 intentos de login</h2>
         @if($loginLogs->isEmpty())
             <p class="text-muted">No hay registros aún.</p>
         @else
             <table>
                 <thead>
-                    <tr><th>#</th><th>Email</th><th>IP</th><th>Estado</th><th>Navegador</th><th>Fecha</th></tr>
+                    <tr><th>#</th><th>Lugar</th><th>Email</th><th>IP</th><th>Estado</th><th>Navegador</th><th>Fecha</th></tr>
                 </thead>
                 <tbody>
                     @foreach($loginLogs as $log)
                     <tr>
                         <td>{{ $log->id }}</td>
+                        <td> {{$log-> error_en}}</td>
                         <td>{{ $log->email }}</td>
                         <td>{{ $log->ip }}</td>
                         <td>
                             <span class="badge {{ $log->exitoso ? 'badge-ok' : 'badge-fail' }}">
-                                {{ $log->exitoso ? '✅ Exitoso' : '❌ Fallido' }}
+                                {{ $log->exitoso ? ' Exitoso' : ' Fallido' }}
                             </span>
                         </td>
                         <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ $log->user_agent }}</td>
@@ -160,7 +161,7 @@
 
     {{-- Logs de registro --}}
     <div class="card">
-        <h2>📝 Últimos 50 intentos de registro</h2>
+        <h2> Últimos 50 intentos de registro</h2>
         @if($registrationLogs->isEmpty())
             <p class="text-muted">No hay registros aún.</p>
         @else
@@ -176,7 +177,7 @@
                         <td>{{ $regLog->ip }}</td>
                         <td>
                             <span class="badge {{ $regLog->successful ? 'badge-ok' : 'badge-fail' }}">
-                                {{ $regLog->successful ? '✅ Exitoso' : '❌ Fallido' }}
+                                {{ $regLog->successful ? ' Exitoso' : ' Fallido' }}
                             </span>
                         </td>
                         <td style="max-width:200px; word-break:break-word;">{{ $regLog->message ?? '-' }}</td>
@@ -191,7 +192,7 @@
 
     {{-- Logs de cambio de rol --}}
     <div class="card">
-        <h2>🔄 Últimos 50 cambios de rol</h2>
+        <h2> Últimos 50 cambios de rol</h2>
         @if($roleChangeLogs->isEmpty())
             <p class="text-muted">No hay cambios de rol registrados.</p>
         @else

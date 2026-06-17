@@ -25,6 +25,7 @@ class LoginLog extends Model
     protected $fillable = [
         'email',
         'ip',
+        'error_en',
         'exitoso',
         'user_agent',
     ];
