@@ -135,7 +135,7 @@ class ThreeFactorController extends Controller
         if ($request->verification_code !== session('auth.3fa.code')) {
             LoginLog::create([
                 'email'      => Auth::user()->email,  // ← email del usuario autenticado
-                'ip'         => $request->ip(),
+                'ip' => \App\Helpers\IpHelper::ubicacion($request),
                 'exitoso'    => false,
                 'error_en'  => '3fa_invalide_code',
                 'user_agent' => $request->userAgent(),

@@ -143,7 +143,7 @@ class TwoFactorController extends Controller
         TwoFactorLog::create([
             'user_id'    => $user->id,
             'email'      => $user->email,
-            'ip'         => $request->ip(),
+            'ip' => \App\Helpers\IpHelper::ubicacion($request),
             'user_agent' => $request->userAgent(),
             'action'     => 'verify_attempt',
             'successful' => $valid,
@@ -153,7 +153,7 @@ class TwoFactorController extends Controller
         if (!$valid) {
             LoginLog::create([
                 'email'      => $user->email,
-                'ip'         => $request->ip(),
+                'ip' => \App\Helpers\IpHelper::ubicacion($request),
                 'exitoso'    => false,
                 'error_en'  => '2fa_invalidate code',
                 'user_agent' => $request->userAgent(),
@@ -178,7 +178,8 @@ class TwoFactorController extends Controller
 
         LoginLog::create([
             'email'      => $user->email,
-            'ip'         => $request->ip(),
+            'ip' => \App\Helpers\IpHelper::ubicacion($request),
+            'error_en' => 'Usuario autenticado correctamente',
             'exitoso'    => true,
             'user_agent' => $request->userAgent(),
         ]);

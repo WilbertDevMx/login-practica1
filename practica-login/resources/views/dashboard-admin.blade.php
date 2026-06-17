@@ -136,7 +136,7 @@
         @else
             <table>
                 <thead>
-                    <tr><th>#</th><th>Lugar</th><th>Email</th><th>IP</th><th>Estado</th><th>Navegador</th><th>Fecha</th></tr>
+                    <tr><th>#</th><th>Motivo</th><th>Email</th><th>IP</th><th>Estado</th><th>Navegador</th><th>Fecha</th></tr>
                 </thead>
                 <tbody>
                     @foreach($loginLogs as $log)

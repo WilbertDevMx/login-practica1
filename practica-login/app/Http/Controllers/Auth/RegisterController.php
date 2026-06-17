@@ -90,7 +90,7 @@ class RegisterController extends Controller
         if ($validator->fails()) {
             RegistrationLog::create([
                 'email'      => $request->email,
-                'ip'         => $request->ip(),
+                'ip' => \App\Helpers\IpHelper::ubicacion($request),
                 'user_agent' => $request->userAgent(),
                 'successful' => false,
                 'message'    => 'Error de validación: ' . implode('; ', $validator->errors()->all()),
@@ -112,7 +112,7 @@ class RegisterController extends Controller
         RegistrationLog::create([
             'user_id'    => $user->id,
             'email'      => $user->email,
-            'ip'         => $request->ip(),
+            'ip' => \App\Helpers\IpHelper::ubicacion($request),
             'user_agent' => $request->userAgent(),
             'successful' => true,
             'message'    => 'Registro exitoso',

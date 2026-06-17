@@ -71,7 +71,8 @@ class LoginController extends Controller
             // Registrar intento exitoso
             LoginLog::create([
                 'email'      => $request->email,
-                'ip'         => $request->ip(),
+                'ip' => \App\Helpers\IpHelper::ubicacion($request),
+                'error_en' => 'Usuario autenticado correctamente',
                 'exitoso'    => true,
                 'user_agent' => $request->userAgent(),
             ]);
@@ -82,7 +83,8 @@ class LoginController extends Controller
             if ($role === 'invitado') {
                 LoginLog::create([
                     'email'      => $request->email,
-                    'ip'         => $request->ip(),
+                    'ip' => \App\Helpers\IpHelper::ubicacion($request),
+                    'error_en' => 'Usuario autenticado correctamente',
                     'exitoso'    => true,
                     'user_agent' => $request->userAgent(),
                 ]);
@@ -99,7 +101,7 @@ class LoginController extends Controller
         // Registrar intento fallido
         LoginLog::create([
             'email'      => $request->email,
-            'ip'         => $request->ip(),
+            'ip' => \App\Helpers\IpHelper::ubicacion($request),
             'error_en'  => 'Error al validar credenciales',
             'exitoso'    => false,
             'user_agent' => $request->userAgent(),

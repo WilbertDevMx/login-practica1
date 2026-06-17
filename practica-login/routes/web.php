@@ -44,11 +44,11 @@ Route::post('/cerrar-sesion-ahora', [LoginController::class, 'logout'])->name('l
 
 // 2FA
 Route::get('/2fa/verify', [TwoFactorController::class, 'showVerifyForm'])->name('2fa.verify');
-Route::post('/2fa/verify', [TwoFactorController::class, 'verify'])->middleware('throttle:3,3');
+Route::post('/2fa/verify', [TwoFactorController::class, 'verify'])->middleware('throttle:3,10');
 
 // 3FA
 Route::get('/3fa/verify', [ThreeFactorController::class, 'showVerifyForm'])->name('3fa.verify')->middleware('throttle:3,10');
-Route::post('/3fa/verify', [ThreeFactorController::class, 'verify'])->middleware('throttle:3,3');
+Route::post('/3fa/verify', [ThreeFactorController::class, 'verify'])->middleware('throttle:3,10');
 Route::post('/3fa/resend', [ThreeFactorController::class, 'resendCode'])->name('3fa.resend');
 
 // Dashboards
