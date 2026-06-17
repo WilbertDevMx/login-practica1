@@ -71,7 +71,7 @@ class TwoFactorController extends Controller
     public function showVerifyForm(Request $request)
     {
         if (session('auth.2fa.completed')) {
-            return redirect()->intended('/dashboard');
+            return redirect()->route('dashboard.usuario');
         }
 
         /** @var \App\Models\User|null $user */

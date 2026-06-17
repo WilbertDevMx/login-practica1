@@ -42,9 +42,8 @@ class ThreeFactorController extends Controller
             /** @var \App\Models\User|null $user */
             $user = Auth::user();
             if ($user->getRoleNames()->first() !== 'administrador') {
-                return redirect('/dashboard');
-            }
-            return $next($request);
+                return redirect()->route('login');
+            }next($request);
         });
     }
 
@@ -63,7 +62,7 @@ class ThreeFactorController extends Controller
     public function showVerifyForm()
     {
         if (session('auth.3fa.completed')) {
-            return redirect()->intended('/dashboard');
+            return redirect()->route('dashboard.admin');
         }
 
         $expiresAt     = session('auth.3fa.expires_at');
