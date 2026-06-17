@@ -6,53 +6,152 @@
 <script src="https://www.google.com/recaptcha/api.js?render={{ config('services.recaptcha.site_key') }}"></script>
 <style>
     .card {
-        background: white;
-        border-radius: 16px;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-        padding: 2rem;
-        width: 100%;
-        max-width: 420px;
-    }
-    h2 { color: #333; margin-bottom: 0.3rem; text-align: center; font-size: 1.6rem; }
-    .subtitle { text-align: center; color: #888; font-size: 0.85rem; margin-bottom: 1.5rem; }
-    label { display: block; margin-top: 1rem; color: #555; font-size: 0.88rem; font-weight: 600; }
-    input[type="text"],
-    input[type="email"],
-    input[type="password"] {
-        width: 100%; padding: 10px 12px; margin-top: 4px;
-        border: 1px solid #ddd; border-radius: 8px; font-size: 1rem;
-        transition: border-color 0.2s;
-    }
-    input:focus { outline: none; border-color: #667eea; }
-    .error-msg { color: #e74c3c; font-size: 0.82rem; margin-top: 4px; }
-    .password-strength {
-        margin-top: 8px; height: 6px; border-radius: 3px;
-        background: #eee; overflow: hidden;
-    }
-    .password-strength-bar {
-        height: 100%; width: 0%; border-radius: 3px;
-        transition: width 0.3s, background 0.3s;
-    }
-    .strength-label { font-size: 0.78rem; margin-top: 4px; color: #888; }
-    .requirements {
-        background: #f7f9fc; border-radius: 8px;
-        padding: 10px 14px; margin-top: 8px; font-size: 0.8rem;
-    }
-    .req { display: flex; align-items: center; gap: 6px; margin: 3px 0; color: #aaa; }
-    .req.valid { color: #27ae60; }
-    .req.valid::before { content: '✅'; }
-    .req:not(.valid)::before { content: '❌'; }
-    button[type="submit"] {
-        width: 100%; margin-top: 1.5rem; padding: 12px;
-        background: #667eea; color: white; border: none;
-        border-radius: 8px; font-size: 1rem; font-weight: bold;
-        cursor: pointer; transition: background 0.2s;
-    }
-    button[type="submit"]:hover { background: #5563c1; }
-    button[type="submit"]:disabled { background: #aaa; cursor: not-allowed; }
-    .login-link { text-align: center; margin-top: 1rem; font-size: 0.88rem; color: #888; }
-    .login-link a { color: #667eea; text-decoration: none; font-weight: 600; }
-    .login-link a:hover { text-decoration: underline; }
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    padding: 2rem;
+    width: 100%;
+    max-width: 420px;
+}
+
+h2 {
+    color: #333;
+    margin-bottom: 0.3rem;
+    text-align: center;
+    font-size: 1.6rem;
+}
+
+.subtitle {
+    text-align: center;
+    color: #888;
+    font-size: 0.85rem;
+    margin-bottom: 1.5rem;
+}
+
+label {
+    display: block;
+    margin-top: 1rem;
+    color: #555;
+    font-size: 0.88rem;
+    font-weight: 600;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 12px;
+    margin-top: 4px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+}
+
+.error-msg {
+    color: #e74c3c;
+    font-size: 0.82rem;
+    margin-top: 4px;
+}
+
+.password-strength {
+    margin-top: 8px;
+    height: 6px;
+    border-radius: 3px;
+    background: #eee;
+    overflow: hidden;
+}
+
+.password-strength-bar {
+    height: 100%;
+    width: 0%;
+    border-radius: 3px;
+    transition: width 0.3s, background 0.3s;
+}
+
+.strength-label {
+    font-size: 0.78rem;
+    margin-top: 4px;
+    color: #888;
+}
+
+.requirements {
+    background: #f7f9fc;
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-top: 10px;
+    border: 1px solid #edf1f7;
+    font-size: 0.8rem;
+}
+
+.req {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 4px 0;
+    color: #aaa;
+    line-height: 1.4;
+}
+
+.req.valid {
+    color: #27ae60;
+}
+
+.req.valid::before {
+    content: '✅';
+}
+
+.req:not(.valid)::before {
+    content: '❌';
+}
+
+button[type="submit"] {
+    width: 100%;
+    margin-top: 1.5rem;
+    padding: 12px;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+}
+
+button[type="submit"]:hover:not(:disabled) {
+    background: #5563c1;
+    transform: translateY(-1px);
+}
+
+button[type="submit"]:disabled {
+    background: #aaa;
+    cursor: not-allowed;
+}
+
+.login-link {
+    text-align: center;
+    margin-top: 1rem;
+    font-size: 0.88rem;
+    color: #888;
+}
+
+.login-link a {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.login-link a:hover {
+    text-decoration: underline;
+}
 </style>
 @endsection
 
@@ -141,7 +240,7 @@
             req.el.classList.toggle('valid', valid);
             if (valid) score++;
         });
-
+//e67e22
         const pct    = (score / 5) * 100;
         const colors = ['#e74c3c', '#e67e22', '#f1c40f', '#2ecc71', '#27ae60'];
         const labels = ['Muy débil', 'Débil', 'Regular', 'Fuerte', 'Muy fuerte'];
